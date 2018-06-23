@@ -1,0 +1,106 @@
+version: "3"
+services:
+geth-mainnet-state: # docker run -itd --name geth-mainnet-partial --restart=on-failure -p 30303:30303 -p 8546:8546 -p 8545:8545 -v /var/local/geth:/root/.ethereum --restart on-failure ethereum/client-go --mainnet --networkid 0 --nousb --cache 4096 --trie-cache-gens 1024 --rpc --rpcaddr 127.0.0.1
+  name: geth-mainnet-partial
+  image: ethereum/client-go
+  restart: on-failure
+  entrypoint: geth
+  command: --rpc --rpcaddr 0.0.0.0 --fast
+  ports:
+  - "30303:30303"
+  - "8546:8546"
+  - "8545:8545"
+  volumes:
+  - /var/local/ethereum:/root/.ethereum
+  networks:
+  - ethereum
+  stop_grace_period: 1m
+geth-mainnet-fullnode: # docker run -itd --name geth-mainnet-full --restart=on-failure -p 30303:30303 -p 8546:8546 -p 8545:8545 -v /var/local/geth:/root/.ethereum --restart on-failure ethereum/client-go --syncmode full --mainnet --networkid 0 --nousb --cache 4096 --trie-cache-gens 1024 --rpc --rpcaddr 127.0.0.1 --identity OakenNode1
+  name: geth-mainnet-full
+  image: ethereum/client-go
+  restart: on-failure
+  entrypoint: geth
+  command: --syncmode full --mainnet --networkid 0 --nousb --cache 4096 --trie-cache-gens 1024 --rpc --rpcaddr 127.0.0.1 --identity OakenNode1
+  ports:
+  - "30303:30303"
+  - "8546:8546"
+  - "8545:8545"
+  volumes:
+  - /var/local/ethereum:/root/.ethereum
+  networks:
+  - ethereum
+  stop_grace_period: 1m
+geth-rinkeby-fullnode: # docker run -itd --name geth-rinkeby-full --restart=on-failure -p 40303:30303 -p 9546:8546 -p 9545:8545 -v /var/local/geth:/root/.ethereum --restart on-failure ethereum/client-go --syncmode full --rinkeby --networkid 4 --nousb --cache 4096 --trie-cache-gens 1024 --rpc --rpcaddr 127.0.0.1 --identity OakenNode1
+  name: geth-rinkeby-full
+  image: ethereum/client-go
+  restart: on-failure
+  entrypoint: geth
+  command: --syncmode full --rinkeby --networkid 4 --nousb --cache 4096 --trie-cache-gens 1024 --rpc --rpcaddr 127.0.0.1 --identity OakenNode1
+  ports:
+  - "30303:30303"
+  - "8546:8546"
+  - "8545:8545"
+  volumes:
+  - /var/local/ethereum:/root/.ethereum
+  networks:
+  - ethereum
+  stop_grace_period: 1m
+
+
+parity: # docker run -d -p 8545:8545 -p 30303:30303 --log-opt max-size=100m --log-opt max-file=20 -v /var/local/parity:/parity parity/parity:v1.9.4 -d /parity --auto-update none --no-download
+  name: parity/
+  image: parity/parity:v1.9.4
+  restart: on-failure
+  entrypoint: parity
+  command: -d /parity --auto-update none --no-download
+  ports:
+  - "30303:30303"
+  - "8545:8545"
+  volumes:
+  - /var/local/parity:/parity
+  networks:
+  - ethereum
+ipfs: # docker run -itd --name ipfs --restart=on-failure -p 4001:4001 -p 8080:8080 -p 5001:5001 -v /var/local/ipfs:/data/ipfs ipfs/go-ipfs:latest
+  name: ipfs
+  image: ipfs/go-ipfs:latest
+  restart: on-failure
+  ports:
+  - "4001:4001"
+  - "127.0.0.1:8080:8080"
+  - "127.0.0.1:5001:5001"
+  volumes:
+  - /var/local/ipfs:/data/ipfs
+  stop_grace_period: 30s
+monero:
+  name: monero
+  image: kannix/monero-full-node
+  restart: on-failure
+  ports:
+  - "18080:18080"
+  - "18081:18081"
+  volumes:
+  - /var/local/monero:/root/.bitmonero
+  stop_grace_period: 1m30s
+bulwark: # docker run -v /var/local/bulwark:/bulwark --name bulwark -d p 52544:52544 -p 52543:52543 multinode/bulwark    //8eph/bulwark-docker
+pivx:
+  name: pivx
+  image: dok3r/pivx
+  restart: on-failure
+  ports:
+  - "51472:51472"
+  volumes:
+  - /var/local/pivx:/root/
+
+#notes
+# /usr/share/ros/oem/oem-config.yml - shipped settings // not users
+# /var/lib/rancher/conf/cloud-config.yml ros config set are here
+# /var/lib/rancher/conf/docker-compose.yml
+# docker run -d -it -p 30303:30303 --name geth --restart=always -v /var/local/ethereum:/root/.ethereum ethereum/client-go --rpc --rpcaddr "0.0.0.0" --fast
+# docker run -d -it -p 4001:4001 -p 127.0.0.1:8080:8080 -p 127.0.0.1:5001:5001 --name ipfs -v /var/local/ipfs:/data/ipfs ipfs/go-ipfs:latest
+# docker run -d -it -p 18080:18080 -p 18081:18081 --name monero -v /var/local/monero:/root/.bitmonero kannix/monero-full-node
+# docker run -d -it -p 51472:51472 -v /var/local/pivx:/root/.pivx --name pivx dok3r/pivx
+
+
+#eth-netstats
+# ethereum-docker/eth-netstats/
+# docker run -d -p 3000:3000 -e WS_SECRET=<YOUR_SECRET> kamael/eth-netstats
