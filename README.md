@@ -21,4 +21,4 @@ http://portainer.readthedocs.io/en/latest/templates.html#stack-template-definiti
 
 # docker-compose.yml
 
-This file in this repo has the definitions for the different cloud-config.yml / docker-compose entries and a long ass command line option.
+This file in the 'files' repo has the definitions for the different cloud-config.yml / docker-compose entries and a long ass command line option.
